@@ -264,7 +264,7 @@ function handleComplete() {
 	//stage.addChild(timerText);
 
 	// initialize properties for player model and create player object
-	player = new Object();
+	player = new Thingy();
 	player.graphics.beginFill("red").drawCircle(0, 0, 40);
  	player.holdingWall = false;
  	player.wallAnimating = false;
@@ -756,7 +756,7 @@ function elasticCollision(obj1, obj2) {
 	stage.update();
 }
 
-class Object extends createjs.Shape {
+class Thingy extends createjs.Shape {
 	constructor() {
 		//this.model = model;
 		super();
@@ -833,7 +833,7 @@ const CONTACT = "contact";
 		Intended to simulate elastic collisions, friction, 
 		and gravity
 */
-class PhysicsObject extends Object {
+class PhysicsObject extends Thingy {
 
 	constructor() {
 		super();
