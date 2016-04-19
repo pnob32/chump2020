@@ -173,11 +173,11 @@ function init() {
 		}
 	}
 
-	var sound = new Howl({
+	/*var sound = new Howl({
 		urls: [SOUND_FILE_MUSICA]
-	}).play();
+	}).play();*/
 
-	/*createjs.Sound.alternateExtensions = ["mp3", "ogg"];
+	createjs.Sound.alternateExtensions = ["mp3", "ogg"];
 
 	createjs.Sound.on("fileload", function(event) {
 		console.log(event);
@@ -186,8 +186,8 @@ function init() {
 	for (var i = 0; i < soundManifest.length; i++) {
 		soundManifest[i].loaded = false;
 		console.log("loading " + soundManifest[i].src);
-		//createjs.Sound.registerSound(soundManifest[i].src, soundManifest[i].id)
-	}*/
+		createjs.Sound.registerSound(soundManifest[i].src, soundManifest[i].id)
+	}
 	//createjs.Sound.registerSound(SOUND_FILE_SPAWNS)
 	/*var manifest = [
 		//{src: CHUMP_SPRITE_FILE, id: "chump"},
