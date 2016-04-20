@@ -18,39 +18,17 @@ canvas {
 	padding-left: 20px;
 }
 
-.game-pill {
-	font-size: 30px;
+.wrapper {
+  position:relative;
 }
 
-.game-pill .delete-icon {
-	width: 25px;
-	height: 25px;
-	display: none;
+.wrapper > canvas,
+.wrapper > input {
+  position:absolute;
+  left:0;
+  top:0;
 }
-
-.game-pill:hover {
-	box-shadow: 1px 1px 1px gray;
-	border: 1px solid gray;
-}
-
-.game-pill:focus {
-	box-shadow: 1px 1px 1px gray;
-	border: 1px solid gray;
-}
-
-.game-pill:hover .delete-icon {
-	width: 25px;
-	height: 25px;
-	display: inline-block;
-}
-
-.form-label{
-    float: left;
-    clear: left;
-    width: 150px;
-    text-align: right;
-    padding-right:50px;
-}
-
-.form-input {
+.wrapper > input {
+  right:10px;
+  top:10px;
 }

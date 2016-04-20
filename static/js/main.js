@@ -20,6 +20,14 @@ const SOUND_FILE_BLOCKHITSBLOCK = "assets/sounds/blockhitsblock.ogg";
 const SOUND_FILE_CHUMPLOSES = "assets/sounds/chumploses.ogg";
 const SOUND_FILE_CHUMPTHROW = "assets/sounds/chumpthrow.ogg";
 const SOUND_FILE_SPAWNS = "../assets/sounds/spawns.ogg";
+const SPAWN_SOUND = "spawn";
+const THROW_SOUND = "throw";
+const LOSE_SOUND = "lose";
+const BLOCKHIT_SOUND ="blockhit";
+const BLOCKDESTROY_SOUND = "blockdestroy";
+const BALLBOUNCE_SOUND = "ballbounce";
+const MUSICA = "musica";
+const MUSICB = "musicb";
 
 var CHUMP_SPRITE_FRAMERATE = 2;
 var CHUMP_SPRITE_HEIGHT = 150;
@@ -103,16 +111,16 @@ var playerSpriteSheet;
 var playerSpriteSheetLoaded = false;
 
 var soundManifest = [
-		{src: SOUND_FILE_SPAWNS, id: "spawn"},
-		{src: SOUND_FILE_CHUMPTHROW, id: "throw"},
-		{src: SOUND_FILE_CHUMPLOSES, id: "lose"},
-		{src: SOUND_FILE_BLOCKHITSBLOCK, id: "blockhit"},
-		{src: SOUND_FILE_BLOCKDESTROY, id: "blockdestroy"},
-		{src: SOUND_FILE_BALLBOUNCE, id: "ballbounce"},
-		{src: SOUND_FILE_MUSICA, id: "musica"},
-		{src: SOUND_FILE_MUSICB, id: "musicb"}
+		{src: SOUND_FILE_SPAWNS, id: SPAWN_SOUND},
+		{src: SOUND_FILE_CHUMPTHROW, id: THROW_SOUND},
+		{src: SOUND_FILE_CHUMPLOSES, id: LOSE_SOUND},
+		{src: SOUND_FILE_BLOCKHITSBLOCK, id: BLOCKHIT_SOUND},
+		{src: SOUND_FILE_BLOCKDESTROY, id: BLOCKDESTROY_SOUND},
+		{src: SOUND_FILE_BALLBOUNCE, id: BALLBOUNCE_SOUND},
+		{src: SOUND_FILE_MUSICA, id: MUSICA},
+		{src: SOUND_FILE_MUSICB, id: MUSICB}
 	];
-
+var volume = 1;
 
 var walkingAnimation = null;
 
@@ -149,7 +157,7 @@ function init() {
 		var image = event.target;
 		background = new createjs.Bitmap(image);
 		backgroundLoaded = true;
-		if (backgroundLoaded && playerSpriteSheetLoaded) {
+		if (isLoadingComplete()) {
 			console.log("handling complete after background is loaded");
 			handleComplete();
 		}
@@ -167,27 +175,34 @@ function init() {
 		};
 		playerSpriteSheet = new createjs.SpriteSheet(spriteData);
 		playerSpriteSheetLoaded = true;
-		if (backgroundLoaded && playerSpriteSheetLoaded) {
-			console.log("handling complete after sprite sheet load");
-			handleComplete();
-		}
+		if (isLoadingComplete()) {
+      handleComplete();
+    }
 	}
 
-	var sound = new Howl({
+	/*var sound = new Howl({
 		urls: [SOUND_FILE_MUSICA]
-	}).play();
+	}).play();*/
 
-	/*createjs.Sound.alternateExtensions = ["mp3", "ogg"];
+	createjs.Sound.alternateExtensions = ["mp3", "ogg"];
 
 	createjs.Sound.on("fileload", function(event) {
-		console.log(event);
+		console.log("loading " + event.src);
+		//console.log(event);
+    for (var i = 0; i < soundManifest.length; i++) {
+      if (event.src === soundManifest[i].src) {
+        soundManifest[i].loaded = true;
+        if (isLoadingComplete()) {
+          handleComplete();
+        }
+      }
+    }
 	}, this);
 
 	for (var i = 0; i < soundManifest.length; i++) {
 		soundManifest[i].loaded = false;
-		console.log("loading " + soundManifest[i].src);
-		//createjs.Sound.registerSound(soundManifest[i].src, soundManifest[i].id)
-	}*/
+		createjs.Sound.registerSound(soundManifest[i].src, soundManifest[i].id)
+	}
 	//createjs.Sound.registerSound(SOUND_FILE_SPAWNS)
 	/*var manifest = [
 		//{src: CHUMP_SPRITE_FILE, id: "chump"},
@@ -218,6 +233,11 @@ function isLoadingComplete() {
 
 function handleComplete() {
 	console.log("in handleComplete");
+  
+  // start music
+  var music = createjs.Sound.play(MUSICA, {loop: -1});
+  createjs.Sound.volume = 0.0;
+  
 	// clear loading screen
 	stage.removeAllChildren();
 	stage.clear();
@@ -264,7 +284,7 @@ function handleComplete() {
 	//stage.addChild(timerText);
 
 	// initialize properties for player model and create player object
-	player = new Object();
+	player = new Thingy;
 	player.graphics.beginFill("red").drawCircle(0, 0, 40);
  	player.holdingWall = false;
  	player.wallAnimating = false;
@@ -320,6 +340,8 @@ function handleComplete() {
 
 		stage.addChild(enemies[i]);
 	}*/
+  
+  
 
 	stage.addEventListener("stagemousedown", onDownEvent);
 	stage.addEventListener("stagemousemove", onMoveEvent);
@@ -618,6 +640,9 @@ function addWall() {
 	 		wallArray[i].goToCoords(WALL_SPAWN_X, wallArray[i].boundsY.max);
 
 			wallArray[i].addEventListener("click", handleWallClick);
+      
+      // play sound
+      //createjs.Sound.play(SPAWN_SOUND);
 
 		 	break;
 		}
@@ -680,8 +705,11 @@ function throwWall() {
 		//var wallVelocity = new Victor(event.stageX)
 		console.log(wallVelocity.toString());
 		wall.physics.v = wallVelocity;
-		//wall.physics.v = new Victor(5,-5);
+    
+    // play sound
+    
 
+    // play sprite animation
 		if (cursor.x < player.x) {
 			// play throw left animation
 			if (player.sprite.currentAnimation != "lThrow") {
@@ -756,7 +784,7 @@ function elasticCollision(obj1, obj2) {
 	stage.update();
 }
 
-class Object extends createjs.Shape {
+class Thingy extends createjs.Shape {
 	constructor() {
 		//this.model = model;
 		super();
@@ -833,7 +861,7 @@ const CONTACT = "contact";
 		Intended to simulate elastic collisions, friction, 
 		and gravity
 */
-class PhysicsObject extends Object {
+class PhysicsObject extends Thingy {
 
 	constructor() {
 		super();
